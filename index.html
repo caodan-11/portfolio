@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>曹丹 · 数据分析作品集看板</title>
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
+<style>
+  :root{
+    --ink:#1F3A5F; --muted:#8FA9C4; --red:#C0504D; --bg:#F5F7FA;
+    --card:#FFFFFF; --line:#E6EBF2; --text:#22303F; --sub:#7A8A9A;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--bg);color:var(--text);
+       font-family:"Microsoft YaHei","PingFang SC",-apple-system,"Segoe UI",sans-serif;}
+  .wrap{max-width:1200px;margin:0 auto;padding:28px 20px 60px;}
+  header{display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:12px;
+         border-bottom:2px solid var(--ink);padding-bottom:14px;}
+  h1{font-size:26px;margin:0;letter-spacing:1px;color:var(--ink);}
+  h1 span{font-size:13px;font-weight:400;color:var(--sub);margin-left:10px;letter-spacing:0;}
+  .meta{font-size:12.5px;color:var(--sub);line-height:1.7;text-align:right;}
+  .tabs{display:flex;gap:8px;margin:22px 0 6px;}
+  .tab{padding:9px 18px;border-radius:8px 8px 0 0;background:#E9EEF5;color:#5A6B7D;cursor:pointer;
+       font-size:13.5px;border:1px solid transparent;border-bottom:none;user-select:none;}
+  .tab.on{background:var(--card);color:var(--ink);font-weight:700;border-color:var(--line);}
+  section{display:none;}
+  section.on{display:block;}
+  .lead{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--ink);
+        border-radius:8px;padding:14px 18px;margin:14px 0 18px;font-size:13.5px;line-height:1.85;color:#33465A;}
+  .lead b{color:var(--ink);}
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:16px;}
+  .kpi{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px 18px;}
+  .kpi .v{font-size:26px;font-weight:700;color:var(--ink);line-height:1.2;}
+  .kpi .l{font-size:13px;margin-top:6px;color:#3C4C5E;}
+  .kpi .s{font-size:11.5px;color:var(--sub);margin-top:3px;}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 12px 6px;}
+  .card.wide{grid-column:1 / -1;}
+  .card h3{margin:0 0 2px 6px;font-size:14px;color:var(--ink);font-weight:700;}
+  .card p{margin:0 0 6px 6px;font-size:12px;color:var(--sub);}
+  .chart{width:100%;height:300px;}
+  .chart.tall{height:340px;}
+  footer{margin-top:26px;font-size:12px;color:var(--sub);line-height:1.9;border-top:1px solid var(--line);padding-top:14px;}
+  footer a{color:var(--ink);}
+  @media (max-width:900px){.kpis{grid-template-columns:repeat(2,1fr);}.grid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>曹丹 · 数据分析作品集看板<span>2 个项目 / 全部为公开数据集</span></h1>
+    <div class="meta">商业数据分析师 / 数据运营<br>19152046468 ｜ 19152046468@163.com</div>
+  </header>
+
+  <div class="tabs">
+    <div class="tab on" data-tab="s1">天猫订单经营分析</div>
+    <div class="tab" data-tab="s2">RFM 会员价值分层</div>
+    <div class="tab" data-tab="s3">C 端 vs B 端对比</div>
+  </div>
+
+  <section id="s1" class="on">
+    <div class="lead">
+      <b>结论：</b>2 月日均订单从 251 单恢复到 2,439 单（9.7 倍），流量不是问题；
+      真正的损失来自退款——<b>23.4% 的退款率吞掉 23.1% 的 GMV（57.2 万元）</b>，
+      其中湖北退款率 71.9%、为全站 3.1 倍，问题在履约而不是需求。
+    </div>
+    <div class="kpis" id="kpi1"></div>
+    <div class="grid">
+      <div class="card wide"><h3>每日订单量与成交率</h3><p>2/10–2/16 数据断档，仅 60 单；下旬恢复至日均 2,439 单</p><div id="c1" class="chart tall"></div></div>
+      <div class="card"><h3>24 小时下单分布</h3><p>20–22 点为峰值，凌晨 0–6 点仍占 9.3%</p><div id="c2" class="chart"></div></div>
+      <div class="card"><h3>省份 TOP10 订单量</h3><p>TOP5 合计 43.0%，上海以 3,353 单居首</p><div id="c3" class="chart"></div></div>
+      <div class="card"><h3>退款率最高的 8 个省份</h3><p>虚线为全站均值 23.4%；湖北 71.9%</p><div id="c4" class="chart"></div></div>
+      <div class="card"><h3>已付款订单金额分布</h3><p>100 元以下占 59.9%，500 元以上仅 0.7%</p><div id="c5" class="chart"></div></div>
+    </div>
+  </section>
+
+  <section id="s2">
+    <div class="lead">
+      <b>结论：</b>2018 年 54,108 名会员里，<b>51.1% 的“重要类”客户贡献 97.4% 的 GMV</b>，
+      另外 48.9% 的会员人均年消费只有 76 元；4,623 名“重要保持”客户平均 257 天未回访，
+      却背着 29.0% 的 GMV——这是最该花预算的地方。
+    </div>
+    <div class="kpis" id="kpi2"></div>
+    <div class="grid">
+      <div class="card wide"><h3>八类客户：人数占比 vs GMV 占比</h3><p>“一般挽留”占 33.0% 人数，只贡献 1.7% GMV</p><div id="c6" class="chart tall"></div></div>
+      <div class="card"><h3>价值矩阵（贡献 = 人数 基准线）</h3><p>气泡大小为客单价；只有重要类在对角线以上</p><div id="c7" class="chart"></div></div>
+      <div class="card"><h3>会员增长 vs 复购率</h3><p>会员 4 年 +96%，复购率 5.5% → 14.4%</p><div id="c8" class="chart"></div></div>
+      <div class="card wide"><h3>八类客户人均年消费</h3><p>重要价值 5,874 元，一般类仅 73–129 元</p><div id="c9" class="chart"></div></div>
+    </div>
+  </section>
+
+  <section id="s3">
+    <div class="lead">
+      <b>结论：</b>C 端美妆靠“大促脉冲 + 头部店铺”——双十一当天是日常的 <b>43.9 倍</b>，
+      <b>35.8% 的降价商品贡献了 79.7% 的增量</b>，TOP5 店铺占 67.4%；
+      B 端日化靠“持续复购 + 客户覆盖”——客户年均 7.6 单、复购率 99.8%，但 <b>TOP20% 客户只贡献 37.6%</b>。
+      把 C 端的 KPI 套到 B 端，会得出完全错误的结论。
+    </div>
+    <div class="kpis" id="kpi3"></div>
+    <div class="grid">
+      <div class="card wide"><h3>美妆：双十一当天的新增销量</h3><p>日常日增约 6.3 万件，双十一 276 万件，11/12 仍有 87.8 万件</p><div id="c10" class="chart tall"></div></div>
+      <div class="card"><h3>美妆：折扣档位 vs 当日增量</h3><p>35.8% 商品降价（中位 25%），贡献 79.7% 增量</p><div id="c11" class="chart"></div></div>
+      <div class="card"><h3>美妆：店铺 TOP10 累计销量</h3><p>TOP5 占 67.4%，相宜本草 824.9 万件居首</p><div id="c12" class="chart"></div></div>
+      <div class="card"><h3>日化：月度采购额与客户数</h3><p>1 月 3.1 亿 → 7 月 6.2 亿，8 月起回落</p><div id="c13" class="chart"></div></div>
+      <div class="card"><h3>日化：客户采购额帕累托</h3><p>TOP10% 客户 21.5%、TOP20% 37.6%——并不集中</p><div id="c14" class="chart"></div></div>
+    </div>
+  </section>
+
+  <footer>
+    数据来源：和鲸社区公开数据集 tmall_order_report.csv（28,010 单）与公开会员订单数据集 sales.xlsx（202,827 单）。
+    全部为公开数据，不含任何公司内部数据。<br>
+    分析代码与报告：见各项目 README ｜ 生成时间 2026-10
+  </footer>
+</div>
+
+<script>
+const DATA = {"s1": {"kpi": [{"v": "28,010", "l": "总订单数", "s": "2020.02.01–02.29"}, {"v": "86.0%", "l": "成交率", "s": "已付款 / 创建"}, {"v": "23.4%", "l": "退款率", "s": "退款单 / 已付款单"}, {"v": "247.5 万", "l": "GMV", "s": "实收 190.2 万"}], "daily": {"x": ["2020-02-01", "2020-02-02", "2020-02-03", "2020-02-04", "2020-02-05", "2020-02-06", "2020-02-07", "2020-02-09", "2020-02-10", "2020-02-11", "2020-02-12", "2020-02-13", "2020-02-14", "2020-02-15", "2020-02-17", "2020-02-18", "2020-02-19", "2020-02-20", "2020-02-21", "2020-02-22", "2020-02-23", "2020-02-24", "2020-02-25", "2020-02-26", "2020-02-27", "2020-02-28", "2020-02-29"], "order": [176, 222, 267, 469, 369, 144, 177, 404, 27, 15, 1, 5, 7, 5, 390, 1015, 1025, 1345, 2068, 2027, 2200, 1998, 3416, 2849, 2586, 2691, 2112], "conv": [92.6, 89.6, 89.5, 88.9, 90.2, 87.5, 88.1, 87.4, 85.2, 100.0, 100.0, 100.0, 100.0, 80.0, 87.7, 82.6, 84.0, 84.8, 85.7, 85.1, 86.1, 84.8, 86.2, 85.6, 86.0, 87.5, 86.0]}, "hourly": {"x": ["0点", "1点", "2点", "3点", "4点", "5点", "6点", "7点", "8点", "9点", "10点", "11点", "12点", "13点", "14点", "15点", "16点", "17点", "18点", "19点", "20点", "21点", "22点", "23点"], "y": [1043, 530, 341, 189, 135, 113, 250, 556, 880, 1283, 1672, 1640, 1367, 1339, 1500, 1720, 1481, 1205, 1270, 1532, 1990, 2204, 2126, 1644]}, "prov": {"x": ["湖南", "天津", "辽宁", "山东", "四川", "北京", "浙江", "江苏", "广东", "上海"], "y": [1099, 1153, 1187, 1804, 2019, 2054, 2061, 2126, 2463, 3353], "conv": [935, 1031, 1012, 1484, 1752, 1853, 1822, 1845, 2022, 3060]}, "refund": {"x": ["江西", "吉林", "海南", "福建", "黑龙江", "安徽", "新疆", "湖北"], "y": [26.0, 26.2, 26.9, 27.8, 27.9, 28.6, 62.8, 71.9], "avg": 23.4}, "amount": {"x": ["<50", "50-100", "100-200", "200-300", "300-500", "500-1000", ">1000"], "y": [30.4, 29.5, 31.9, 5.1, 2.4, 0.5, 0.1]}}, "s2": {"kpi": [{"v": "54,108", "l": "2018 会员数", "s": "4 年 20.3 万单"}, {"v": "14.4%", "l": "复购率", "s": "下单 ≥2 次占比"}, {"v": "97.4%", "l": "重要类 GMV 占比", "s": "51.1% 的人数"}, {"v": "4,623", "l": "重要保持客户", "s": "平均 257 天未回访"}], "bar": {"x": ["重要价值", "重要保持", "重要发展", "重要挽留", "一般价值", "一般保持", "一般发展", "一般挽留"], "cnt": [3.2, 8.5, 11.6, 27.8, 1.2, 1.4, 13.3, 33.0], "gmv": [12.9, 29.0, 16.4, 39.1, 0.1, 0.1, 0.7, 1.7]}, "scatter": [[3.2, 12.9, 5874.0, "重要价值"], [8.5, 29.0, 4933.0, "重要保持"], [11.6, 16.4, 2062.0, "重要发展"], [27.8, 39.1, 2047.0, "重要挽留"], [1.2, 0.1, 128.0, "一般价值"], [1.4, 0.1, 129.0, "一般保持"], [13.3, 0.7, 73.0, "一般发展"], [33.0, 1.7, 73.0, "一般挽留"]], "trend": [{"y": "2015", "members": 27611, "repeat": 5.5}, {"y": "2016", "members": 32605, "repeat": 6.6}, {"y": "2017", "members": 34267, "repeat": 7.1}, {"y": "2018", "members": 54108, "repeat": 14.4}], "value": {"x": ["一般挽留", "一般发展", "一般保持", "一般价值", "重要挽留", "重要发展", "重要保持", "重要价值"], "y": [73.0, 73.0, 129.0, 128.0, 2047.0, 2062.0, 4933.0, 5874.0]}}, "s3": {"kpi": [{"v": "43.9 倍", "l": "双十一 vs 日常", "s": "美妆当日新增 276 万件"}, {"v": "79.7%", "l": "降价贡献增量", "s": "35.8% 商品降价"}, {"v": "67.4%", "l": "TOP5 店铺销量", "s": "19 家店铺"}, {"v": "37.6%", "l": "TOP20% 客户金额", "s": "日化 1,084 个客户"}], "daily": {"x": ["11-06", "11-07", "11-08", "11-09", "11-10", "11-11", "11-12", "11-13", "11-14"], "y": [70867, 66370, 81037, 84286, 107578, 2759641, 877795, 12647, 17656]}, "disc": {"x": ["未降价", "0-10%", "10-20%", "20-30%", "30-40%", ">40%"], "n": [1322, 53, 261, 103, 95, 234], "inc": [552650, 128161, 606555, 319183, 307744, 837958]}, "shop": {"x": ["美加净", "兰芝", "蜜丝佛陀", "佰草集", "自然堂", "欧莱雅", "妮维雅", "美宝莲", "悦诗风吟", "相宜本草"], "y": [1020766, 1139724, 1663762, 2144779, 3127405, 4306578, 4317933, 4468752, 4660422, 8249342]}, "month": {"x": ["1", "2", "4", "5", "6", "7", "8", "9"], "y": [31362.0, 34378.1, 50519.6, 57527.1, 57431.2, 62216.1, 60827.5, 49862.3], "cust": [461, 505, 660, 671, 687, 733, 725, 640]}, "pareto": {"x": [0.0, 1.11, 2.21, 3.32, 4.43, 5.54, 6.64, 7.75, 8.86, 9.96, 11.07, 12.18, 13.28, 14.39, 15.5, 16.61, 17.71, 18.82, 19.93, 21.03, 22.14, 23.25, 24.35, 25.46, 26.57, 27.68, 28.78, 29.89, 31.0, 32.1, 33.21, 34.32, 35.42, 36.53, 37.64, 38.75, 39.85, 40.96, 42.07, 43.17, 44.28, 45.39, 46.49, 47.6, 48.71, 49.82, 50.92, 52.03, 53.14, 54.24, 55.35, 56.46, 57.56, 58.67, 59.78, 60.89, 61.99, 63.1, 64.21, 65.31, 66.42, 67.53, 68.63, 69.74, 70.85, 71.96, 73.06, 74.17, 75.28, 76.38, 77.49, 78.6, 79.7, 80.81, 81.92, 83.03, 84.13, 85.24, 86.35, 87.45, 88.56, 89.67, 90.77, 91.88, 92.99, 94.1, 95.2, 96.31, 97.42, 98.52, 99.63], "y": [0.3, 3.3, 6.0, 8.5, 10.9, 13.2, 15.4, 17.6, 19.7, 21.7, 23.6, 25.5, 27.4, 29.2, 31.0, 32.7, 34.4, 36.1, 37.7, 39.3, 40.9, 42.5, 44.0, 45.5, 47.0, 48.4, 49.9, 51.3, 52.7, 54.0, 55.3, 56.7, 57.9, 59.2, 60.4, 61.7, 62.9, 64.0, 65.1, 66.3, 67.4, 68.4, 69.5, 70.6, 71.6, 72.6, 73.6, 74.5, 75.5, 76.4, 77.4, 78.3, 79.2, 80.0, 80.9, 81.7, 82.6, 83.3, 84.1, 84.9, 85.7, 86.4, 87.1, 87.8, 88.6, 89.2, 89.9, 90.6, 91.2, 91.8, 92.4, 92.9, 93.5, 94.0, 94.5, 95.0, 95.5, 96.0, 96.4, 96.8, 97.2, 97.6, 97.9, 98.3, 98.6, 98.9, 99.2, 99.4, 99.6, 99.8, 100.0]}}};
+const INK='#1F3A5F', MUTED='#8FA9C4', RED='#C0504D', GREY='#B8C9DA';
+const axis = {axisLine:{lineStyle:{color:'#DDE4EC'}}, axisLabel:{color:'#7A8A9A',fontSize:11},
+              splitLine:{lineStyle:{color:'#F0F3F7'}}};
+
+function kpis(el, list){
+  el.innerHTML = list.map(k=>`<div class="kpi"><div class="v">${k.v}</div>
+      <div class="l">${k.l}</div><div class="s">${k.s}</div></div>`).join('');
+}
+kpis(document.getElementById('kpi1'), DATA.s1.kpi);
+kpis(document.getElementById('kpi2'), DATA.s2.kpi);
+
+const charts = [];
+function mk(id, opt){ const c = echarts.init(document.getElementById(id)); c.setOption(opt); charts.push(c); }
+
+// C1 日趋势
+mk('c1', {
+  tooltip:{trigger:'axis'},
+  legend:{data:['创建订单','成交率'],top:0,textStyle:{fontSize:11,color:'#5A6B7D'}},
+  grid:{left:52,right:56,top:36,bottom:46},
+  xAxis:{type:'category',data:DATA.s1.daily.x,...axis,axisLabel:{color:'#7A8A9A',fontSize:10,rotate:60}},
+  yAxis:[{type:'value',name:'单',...axis},{type:'value',name:'%',min:75,max:100,...axis,splitLine:{show:false}}],
+  series:[
+    {name:'创建订单',type:'bar',data:DATA.s1.daily.order,itemStyle:{color:MUTED},barWidth:'60%'},
+    {name:'成交率',type:'line',yAxisIndex:1,data:DATA.s1.daily.conv,smooth:true,
+     symbolSize:5,lineStyle:{color:RED,width:2},itemStyle:{color:RED}}
+  ]
+});
+
+// C2 小时
+mk('c2', {
+  tooltip:{trigger:'axis'},
+  grid:{left:46,right:16,top:20,bottom:34},
+  xAxis:{type:'category',data:DATA.s1.hourly.x,...axis,axisLabel:{color:'#7A8A9A',fontSize:10,interval:2}},
+  yAxis:{type:'value',name:'单',...axis},
+  series:[{type:'bar',data:DATA.s1.hourly.y,itemStyle:{color:INK},barWidth:'62%'}]
+});
+
+// C3 省份
+mk('c3', {
+  tooltip:{trigger:'axis'},
+  grid:{left:66,right:60,top:16,bottom:28},
+  xAxis:{type:'value',...axis},
+  yAxis:{type:'category',data:DATA.s1.prov.x,...axis},
+  series:[{type:'bar',data:DATA.s1.prov.y,itemStyle:{color:INK},barWidth:'62%',
+           label:{show:true,position:'right',fontSize:10,color:'#5A6B7D',formatter:'{c}'},
+           tooltip:{formatter:p=>DATA.s1.prov.x[p.dataIndex]+'：订单 '+p.value+' 单，已付款 '+DATA.s1.prov.conv[p.dataIndex]+' 单'}}]
+});
+
+// C4 退款率
+mk('c4', {
+  tooltip:{trigger:'axis'},
+  grid:{left:66,right:60,top:16,bottom:28},
+  xAxis:{type:'value',...axis},
+  yAxis:{type:'category',data:DATA.s1.refund.x,...axis},
+  series:[{type:'bar',data:DATA.s1.refund.y,itemStyle:{color:RED},barWidth:'62%',
+           label:{show:true,position:'right',fontSize:10,color:'#5A6B7D',formatter:'{c}%'},
+           markLine:{silent:true,symbol:'none',data:[{xAxis:DATA.s1.refund.avg}],
+                     lineStyle:{color:INK,type:'dashed'},
+                     label:{formatter:'均值 '+DATA.s1.refund.avg+'%',fontSize:10,color:INK}}}]
+});
+
+// C5 金额分布
+mk('c5', {
+  tooltip:{trigger:'axis'},
+  grid:{left:46,right:16,top:20,bottom:34},
+  xAxis:{type:'category',data:DATA.s1.amount.x,...axis,axisLabel:{color:'#7A8A9A',fontSize:10,rotate:20}},
+  yAxis:{type:'value',name:'%',...axis},
+  series:[{type:'bar',data:DATA.s1.amount.y,itemStyle:{color:MUTED},barWidth:'58%',
+           label:{show:true,position:'top',fontSize:10,color:'#5A6B7D',formatter:'{c}%'}}]
+});
+
+// C6 人数 vs GMV
+mk('c6', {
+  tooltip:{trigger:'axis'},
+  legend:{data:['人数占比','GMV 占比'],top:0,textStyle:{fontSize:11,color:'#5A6B7D'}},
+  grid:{left:50,right:20,top:36,bottom:34},
+  xAxis:{type:'category',data:DATA.s2.bar.x,...axis,axisLabel:{color:'#7A8A9A',fontSize:11}},
+  yAxis:{type:'value',name:'%',...axis},
+  series:[
+    {name:'人数占比',type:'bar',data:DATA.s2.bar.cnt,itemStyle:{color:MUTED},barWidth:'32%',
+     label:{show:true,position:'top',fontSize:9,color:'#7A8A9A'}},
+    {name:'GMV 占比',type:'bar',data:DATA.s2.bar.gmv,itemStyle:{color:INK},barWidth:'32%',
+     label:{show:true,position:'top',fontSize:9,color:INK}}
+  ]
+});
+
+// C7 矩阵
+mk('c7', {
+  tooltip:{formatter:p=>`${p.data[3]}<br/>人数占比 ${p.data[0]}%<br/>GMV 占比 ${p.data[1]}%<br/>人均 ${p.data[2]} 元`},
+  grid:{left:52,right:20,top:24,bottom:40},
+  xAxis:{type:'value',name:'人数占比 %',max:45,...axis},
+  yAxis:{type:'value',name:'GMV 占比 %',max:45,...axis},
+  series:[{
+    type:'scatter',
+    data:DATA.s2.scatter.map(d=>[d[0],d[1],d[2],d[3]]),
+    symbolSize:d=>Math.max(14,d[2]/220),
+    itemStyle:{color:p=>p.data[3].startsWith('重要')?INK:'#C7B3B3',opacity:0.85},
+    label:{show:true,formatter:p=>p.data[3],position:'right',fontSize:10,color:'#44566B'},
+    markLine:{silent:true,symbol:'none',lineStyle:{color:'#C9D3DE',type:'dashed'},
+              data:[[{coord:[0,0]},{coord:[45,45]}]],label:{show:false}}
+  }]
+});
+
+// C8 增长 vs 复购
+mk('c8', {
+  tooltip:{trigger:'axis'},
+  legend:{data:['会员数','复购率'],top:0,textStyle:{fontSize:11,color:'#5A6B7D'}},
+  grid:{left:56,right:50,top:36,bottom:32},
+  xAxis:{type:'category',data:DATA.s2.trend.map(t=>t.y),...axis},
+  yAxis:[{type:'value',name:'人',...axis},{type:'value',name:'%',min:0,max:20,...axis,splitLine:{show:false}}],
+  series:[
+    {name:'会员数',type:'bar',data:DATA.s2.trend.map(t=>t.members),itemStyle:{color:MUTED},barWidth:'46%',
+     label:{show:true,position:'top',fontSize:10,color:'#5A6B7D'}},
+    {name:'复购率',type:'line',yAxisIndex:1,data:DATA.s2.trend.map(t=>t.repeat),smooth:true,
+     lineStyle:{color:RED,width:2},itemStyle:{color:RED},symbolSize:6,
+     label:{show:true,fontSize:10,color:RED,formatter:'{c}%'}}
+  ]
+});
+
+// C9 人均消费
+mk('c9', {
+  tooltip:{trigger:'axis'},
+  grid:{left:66,right:70,top:16,bottom:28},
+  xAxis:{type:'value',...axis},
+  yAxis:{type:'category',data:DATA.s2.value.x,...axis},
+  series:[{type:'bar',data:DATA.s2.value.y,barWidth:'60%',
+           itemStyle:{color:p=>DATA.s2.value.x[p.dataIndex].startsWith('重要')?INK:MUTED},
+           label:{show:true,position:'right',fontSize:10,color:'#5A6B7D',
+                  formatter:'{c} 元'}}]
+});
+
+// ---------------- Tab 3：多源对比 ----------------
+kpis(document.getElementById('kpi3'), DATA.s3.kpi);
+
+// C10 美妆日增量
+mk('c10', {
+  tooltip:{trigger:'axis'},
+  grid:{left:62,right:20,top:22,bottom:34},
+  xAxis:{type:'category',data:DATA.s3.daily.x,...axis},
+  yAxis:{type:'value',name:'件',...axis},
+  series:[{type:'bar',data:DATA.s3.daily.y,barWidth:'58%',
+           itemStyle:{color:p=>p.value>1e6?RED:MUTED},
+           label:{show:true,position:'top',fontSize:9,color:'#5A6B7D',
+                  formatter:p=>(p.value/1e4).toFixed(1)+'万'}}]
+});
+
+// C11 折扣档
+mk('c11', {
+  tooltip:{trigger:'axis'},
+  legend:{data:['商品数','当日增量'],top:0,textStyle:{fontSize:11,color:'#5A6B7D'}},
+  grid:{left:52,right:56,top:34,bottom:30},
+  xAxis:{type:'category',data:DATA.s3.disc.x,...axis,axisLabel:{color:'#7A8A9A',fontSize:10,rotate:20}},
+  yAxis:[{type:'value',name:'个',...axis},{type:'value',name:'万件',...axis,splitLine:{show:false}}],
+  series:[
+    {name:'商品数',type:'bar',data:DATA.s3.disc.n,itemStyle:{color:MUTED},barWidth:'46%'},
+    {name:'当日增量',type:'line',yAxisIndex:1,data:DATA.s3.disc.inc.map(v=>+(v/1e4).toFixed(0)),
+     symbolSize:6,lineStyle:{color:RED,width:2},itemStyle:{color:RED}}
+  ]
+});
+
+// C12 店铺
+mk('c12', {
+  tooltip:{trigger:'axis'},
+  grid:{left:72,right:56,top:16,bottom:28},
+  xAxis:{type:'value',...axis},
+  yAxis:{type:'category',data:DATA.s3.shop.x,...axis},
+  series:[{type:'bar',data:DATA.s3.shop.y,itemStyle:{color:INK},barWidth:'60%',
+           label:{show:true,position:'right',fontSize:10,color:'#5A6B7D',
+                  formatter:p=>(p.value/1e4).toFixed(0)+'万'}}]
+});
+
+// C13 日化月度
+mk('c13', {
+  tooltip:{trigger:'axis'},
+  legend:{data:['采购额','客户数'],top:0,textStyle:{fontSize:11,color:'#5A6B7D'}},
+  grid:{left:56,right:50,top:34,bottom:30},
+  xAxis:{type:'category',data:DATA.s3.month.x,...axis,axisLabel:{color:'#7A8A9A',fontSize:10,formatter:v=>v+'月'}},
+  yAxis:[{type:'value',name:'万元',...axis},{type:'value',name:'人',...axis,splitLine:{show:false}}],
+  series:[
+    {name:'采购额',type:'bar',data:DATA.s3.month.y,itemStyle:{color:MUTED},barWidth:'48%'},
+    {name:'客户数',type:'line',yAxisIndex:1,data:DATA.s3.month.cust,smooth:true,
+     lineStyle:{color:RED,width:2},itemStyle:{color:RED},symbolSize:6}
+  ]
+});
+
+// C14 帕累托
+mk('c14', {
+  tooltip:{trigger:'axis'},
+  grid:{left:56,right:20,top:20,bottom:40},
+  xAxis:{type:'value',name:'客户累计占比 %',max:100,...axis},
+  yAxis:{type:'value',name:'金额累计占比 %',max:100,...axis},
+  series:[{
+    type:'line',data:DATA.s3.pareto.x.map((v,i)=>[v,DATA.s3.pareto.y[i]]),
+    smooth:true,showSymbol:false,lineStyle:{color:INK,width:2},
+    areaStyle:{color:'rgba(143,169,196,0.28)'},
+    markLine:{silent:true,symbol:'none',lineStyle:{color:RED,type:'dashed'},
+              data:[{xAxis:20},{yAxis:37.6}],label:{show:false}}
+  }]
+});
+
+// tabs
+document.querySelectorAll('.tab').forEach(t=>{
+  t.onclick = () => {
+    document.querySelectorAll('.tab').forEach(x=>x.classList.remove('on'));
+    document.querySelectorAll('section').forEach(x=>x.classList.remove('on'));
+    t.classList.add('on');
+    document.getElementById(t.dataset.tab).classList.add('on');
+    setTimeout(()=>charts.forEach(c=>c.resize()), 30);
+  };
+});
+window.addEventListener('resize', ()=>charts.forEach(c=>c.resize()));
+setTimeout(()=>charts.forEach(c=>c.resize()), 80);
+</script>
+</body>
+</html>
