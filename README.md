@@ -3,7 +3,7 @@
 > 1 年数据相关经验（AI 数据生产 / 数据质量），信息与计算科学专业。
 > 3 个完整分析项目，从取数到报告全链路可复现，全部基于**公开数据集**。
 
-**在线看板**：https://<你的用户名>.github.io/portfolio/ （部署后替换）
+**在线看板**：[caodan-11.github.io/portfolio](https://caodan-11.github.io/portfolio/) ｜ **仓库**：[github.com/caodan-11/portfolio](https://github.com/caodan-11/portfolio)
 
 ---
 
