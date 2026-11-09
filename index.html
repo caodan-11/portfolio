@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>曹丹 · 数据分析作品集</title>
+<script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/echarts-gl@2/dist/echarts-gl.min.js"></script>
+<style>
+:root{--ink:#1F3A5F;--line:#E3E9F0;--sub:#68788A;--bg:#F6F8FB;--acc:#C0504D;}
+*{box-sizing:border-box;}
+body{margin:0;background:var(--bg);font-family:"Microsoft YaHei",system-ui,sans-serif;color:var(--ink);}
+.wrap{max-width:1180px;margin:0 auto;padding:28px 22px 60px;}
+header{border-bottom:2px solid var(--ink);padding-bottom:16px;margin-bottom:18px;}
+h1{margin:0;font-size:24px;}
+h1 span{display:block;font-size:12.5px;font-weight:400;color:var(--sub);margin-top:6px;}
+.meta{font-size:13px;color:var(--sub);margin-top:8px;line-height:1.7;}
+.tabs{display:flex;gap:8px;margin:18px 0 22px;}
+.tab{padding:9px 18px;border:1px solid var(--line);background:#fff;border-radius:4px;cursor:pointer;font-size:14px;}
+.tab.on{background:var(--ink);color:#fff;border-color:var(--ink);}
+section{display:none;} section.on{display:block;}
+
+.part{background:#fff;border:1px solid var(--line);border-radius:6px;padding:20px 22px 18px;margin-bottom:20px;}
+.part-head{display:flex;align-items:baseline;gap:10px;border-bottom:1px solid var(--line);padding-bottom:10px;margin-bottom:12px;}
+.tag{background:var(--ink);color:#fff;font-size:12px;padding:2px 9px;border-radius:3px;}
+.part-head h2{margin:0;font-size:17px;}
+.scale{font-size:12.5px;color:var(--sub);}
+.desc{font-size:13.5px;line-height:1.9;color:#33445A;margin:0 0 12px;}
+.chips{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:14px;}
+.chip{border:1px solid var(--line);border-radius:4px;padding:8px 14px;background:#FBFCFE;}
+.chip .k{font-size:11.5px;color:var(--sub);}
+.chip .v{font-size:17px;font-weight:700;color:var(--ink);margin-top:2px;}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.card{background:#fff;border:1px solid var(--line);border-radius:4px;padding:12px 10px 4px;}
+.card.wide{grid-column:1/-1;}
+.card h3{margin:0 0 2px 6px;font-size:13.5px;}
+.card p{margin:0 0 6px 6px;font-size:12px;color:var(--sub);}
+.chart{width:100%;height:290px;}
+.chart.tall{height:330px;}
+.chart3d{width:100%;height:430px;}
+.result{margin-top:14px;border-left:4px solid #8FA9C4;background:#F4F7FB;padding:10px 14px;font-size:13.5px;line-height:1.85;color:#2E5A88;}
+.result b{color:var(--ink);}
+.imgbox{text-align:center;margin:6px 0 10px;}
+.imgbox img{max-width:100%;border:1px solid var(--line);border-radius:4px;}
+footer{margin-top:26px;font-size:12px;color:var(--sub);line-height:1.9;border-top:1px solid var(--line);padding-top:14px;}
+@media(max-width:900px){.grid{grid-template-columns:1fr;}.part{padding:16px;}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <h1>曹丹 · 数据分析作品集<span>2 个项目 / 12 张图 / 全部为公开数据集</span></h1>
+  <div class="meta">数据分析 / 数据运营 ｜ 广东-广州<br>19152046468 ｜ 19152046468@163.com</div>
+</header>
+
+<div class="tabs">
+  <div class="tab on" data-tab="s1">电商订单数据分析</div>
+  <div class="tab" data-tab="s2">RFM 会员价值分层</div>
+</div>
+
+<section id="s1" class="on">
+  <div class="part">
+    <div class="part-head"><span class="tag">Part 1</span><h2>天猫订单</h2><span class="scale">28,010 单 · 2020 年 2 月</span></div>
+    <p class="desc">字段包括订单编号、总金额、实付金额、收货地址、下单时间、付款时间与退款金额。
+      清洗用代码完成（空格、空值、重复、省份名称统一）；「付款时间为空」即未付款，是判断成交的依据。</p>
+    <div class="chips">
+      <div class="chip"><div class="k">总订单数</div><div class="v">28,010</div></div>
+      <div class="chip"><div class="k">成交率</div><div class="v">86.0%</div></div>
+      <div class="chip"><div class="k">退款率</div><div class="v">23.4%</div></div>
+      <div class="chip"><div class="k">下单高峰</div><div class="v">10 / 15 / 21 点</div></div>
+    </div>
+    <div class="grid">
+      <div class="card"><h3>每日订单量</h3><p>上半月受疫情影响偏低，下旬复工后明显回升</p><div id="c1" class="chart"></div></div>
+      <div class="card"><h3>24 小时下单分布</h3><p>三个高峰中 21–22 点最高，夜间是主力时段</p><div id="c2" class="chart"></div></div>
+    </div>
+    <div class="result"><b>成果：</b>时间维度结论清晰——上旬数据难看不是需求消失，是复工节奏；
+      下单集中在 10 / 15 / 21 点，<b>21–22 点最高</b>，高峰期尤其是夜间应保障客服响应速度，这也解释了电商为什么普遍设夜班。</div>
+  </div>
+
+  <div class="part">
+    <div class="part-head"><span class="tag">Part 2</span><h2>双十一淘宝美妆</h2><span class="scale">27,598 条 · 22 家店铺 · 10 天快照</span></div>
+    <p class="desc">各店铺、各商品的每日销售快照（11/5–11/14），字段含价格、销量、评论数。
+      清洗后派生出「销售额 = 销量 × 单价」用于横向比较。</p>
+    <div class="chips">
+      <div class="chip"><div class="k">日销量峰值</div><div class="v">约 3,332 万</div></div>
+      <div class="chip"><div class="k">峰值日</div><div class="v">11 月 9 日</div></div>
+      <div class="chip"><div class="k">TOP10 第一名占比</div><div class="v">23.21%</div></div>
+      <div class="chip"><div class="k">最贵均价</div><div class="v">约 1,361 元</div></div>
+    </div>
+    <div class="grid">
+      <div class="card wide"><h3>每日销量走势</h3><p>峰值 11 月 9 日，11 日前后明显回落</p><div id="c3" class="chart"></div></div>
+      <div class="card"><h3>店铺累计销量 TOP10</h3><p>相宜本草一家占前十总量的 23.2%</p><div id="c4" class="chart"></div></div>
+      <div class="card"><h3>店铺平均价格 TOP10</h3><p>最贵为娇兰，约 1,361 元</p><div id="c5" class="chart"></div></div>
+    </div>
+    <div class="result"><b>成果：</b>大促放量集中在前半段、后半段回落，备货与投放应跟着曲线走；
+      头部集中度高（<b>相宜本草占 TOP10 的 23.2%</b>），把价格榜与销量榜并看，能区分<b>「低价走量」与「高客单支撑」两类店铺</b>。</div>
+  </div>
+
+  <div class="part">
+    <div class="part-head"><span class="tag">Part 3</span><h2>日化批发</h2><span class="scale">3.1 万单 · 1,084 客户 · 122 SKU</span></div>
+    <p class="desc">批发生意的订单数据，分订单表与商品表两张表。按商品编号关联后清洗（单位、日期格式、客户编码），
+      再从月份、地区、品类三个维度看需求分布，最后用 RFM 给客户排价值顺序。</p>
+    <div class="chips">
+      <div class="chip"><div class="k">订购峰值月</div><div class="v">7 月</div></div>
+      <div class="chip"><div class="k">护肤品占比</div><div class="v">约 85%</div></div>
+      <div class="chip"><div class="k">需求最大小类</div><div class="v">面膜</div></div>
+      <div class="chip"><div class="k">客户数</div><div class="v">1,084</div></div>
+    </div>
+    <div class="grid">
+      <div class="card"><h3>每月订购量</h3><p>1 月最低、7 月最高，之后回落</p><div id="c6" class="chart"></div></div>
+      <div class="card"><h3>地区订购量 TOP10</h3><p>上海、苏州、重庆、深圳、泉州居前</p><div id="c7" class="chart"></div></div>
+      <div class="card wide"><h3>品类需求结构</h3><p>护肤品约占 85%，面膜是需求量最大的小类</p><div id="c8" class="chart"></div></div>
+    </div>
+    <div class="result"><b>成果：</b>旺季集中在夏季，<b>7 月最高、1 月最低</b>——淡季做客户维护、旺季前一个月备货；
+      需求集中在<b>前五座城市</b>，可用少量人力覆盖主要市场但要注意单点风险；
+      选品重心应放在<b>护肤品（85%）</b>，尤其是面膜这类高频消耗品。</div>
+  </div>
+</section>
+
+<section id="s2">
+  <div class="part">
+    <div class="part-head"><span class="tag">数据</span><h2>2015–2018 会员订单</h2><span class="scale">12.9 万会员 · 20.3 万单</span></div>
+    <p class="desc">一份 Excel 五个 sheet：2015–2018 四个年度表（会员ID、订单号、提交日期、订单金额）+ 会员等级表。
+      合并后做三步清洗：删缺失、过滤金额 &lt; 1 元、以每年最后一天为观察节点；再按「年份 + 会员」聚合 R / F / M。</p>
+    <div class="chips">
+      <div class="chip"><div class="k">年-会员记录</div><div class="v">148,591</div></div>
+      <div class="chip"><div class="k">去重会员</div><div class="v">129,447</div></div>
+      <div class="chip"><div class="k">人群标签数</div><div class="v">25 类</div></div>
+      <div class="chip"><div class="k">2018 复购率</div><div class="v">14.4%</div></div>
+    </div>
+    <div class="grid">
+      <div class="card wide"><h3>人群 × 年份 × 人数（可拖动旋转 / 悬停查看数值）</h3>
+        <p>柱子越高代表该年这类人越多；212 类持续增长，2018 年达 14,297 人</p>
+        <div id="c9" class="chart3d"></div></div>
+      <div class="card wide"><h3>2018 年金额贡献 TOP10 人群</h3><p>人数最多的 212 类金额只占 5.4%；213 类人数占 11.8%、金额占 30.9%</p><div id="c10" class="chart"></div></div>
+    </div>
+    <div class="result"><b>成果：</b>分层的价值是<b>排序</b>，不是贴标签——<b>213 类</b>（人数 11.8%、金额 30.9%）
+      该优先维护；金额高但久未回购的该优先唤醒；只买过一次的大多数用通用活动覆盖即可。
+      复购率只有 <b>14.4%</b>，85.6% 的会员当年只买一次，<b>复购才是增长空间</b>。</div>
+  </div>
+</section>
+
+<footer>
+  数据来源：和鲸社区公开数据集 —— tmall_order_report.csv（28,010 单）、双十一美妆快照（27,598 条）、日化批发订单（3.1 万条）、sales.xlsx（20.3 万单）<br>
+  三份订单数据来源与口径不同，分部分独立分析，不做跨数据集横向对比 ｜ 全部为公开数据，不含任何公司内部数据 ｜ 生成时间 2026-11
+</footer>
+</div>
+
+<script>
+const DATA = {"daily": {"x": ["02-01", "02-02", "02-03", "02-04", "02-05", "02-06", "02-07", "02-09", "02-10", "02-11", "02-12", "02-13", "02-14", "02-15", "02-17", "02-18", "02-19", "02-20", "02-21", "02-22", "02-23", "02-24", "02-25", "02-26", "02-27", "02-28", "02-29"], "y": [176, 222, 267, 469, 369, 144, 177, 404, 27, 15, 1, 5, 7, 5, 390, 1015, 1025, 1345, 2068, 2027, 2200, 1998, 3416, 2849, 2586, 2691, 2112]}, "hourly": {"x": ["0点", "1点", "2点", "3点", "4点", "5点", "6点", "7点", "8点", "9点", "10点", "11点", "12点", "13点", "14点", "15点", "16点", "17点", "18点", "19点", "20点", "21点", "22点", "23点"], "y": [1043, 530, 341, 189, 135, 113, 250, 556, 880, 1283, 1672, 1640, 1367, 1339, 1500, 1720, 1481, 1205, 1270, 1532, 1990, 2204, 2126, 1644]}, "bd": {"x": ["11-05", "11-06", "11-07", "11-08", "11-09", "11-10", "11-11", "11-12", "11-13", "11-14"], "y": [3225.0, 3262.0, 3201.0, 3267.0, 3332.0, 3178.0, 2782.0, 2882.0, 2930.0, 2996.0]}, "btop": {"x": ["相宜本草", "美宝莲", "悦诗风吟", "妮维雅", "欧莱雅", "自然堂", "蜜丝佛陀", "佰草集", "兰芝", "美加净"], "y": [6546.3, 3935.8, 3907.0, 3842.2, 3399.8, 1808.1, 1539.1, 1499.8, 913.6, 882.6]}, "bprice": {"x": ["娇兰", "SKII", "雪花秀", "雅诗兰黛", "兰蔻", "资生堂", "兰芝", "倩碧", "玉兰油", "植村秀"], "y": [1361.0, 1012.0, 901.0, 872.0, 756.0, 577.0, 356.0, 346.0, 329.0, 312.0]}, "fm": {"x": ["1月", "2月", "4月", "5月", "6月", "7月", "8月", "9月"], "y": [1947407.0, 2148249.0, 3185347.0, 3590871.0, 3554518.0, 3886134.0, 3833576.0, 3115193.0]}, "fcity": {"x": ["上海市", "苏州市", "重庆市", "深圳市", "泉州市", "杭州市", "北京市", "广州市", "南通市", "泰州市"], "y": [1023720.0, 923598.0, 768155.0, 713622.0, 667374.0, 508405.0, 493825.0, 477152.0, 412376.0, 378607.0]}, "cat": {"x": ["护肤品", "彩妆"], "y": [21496856.0, 3762851.0]}, "sub": {"x": ["面膜", "面霜", "爽肤水", "眼霜", "隔离霜", "防晒霜", "口红", "洁面乳"], "y": [492.6, 413.0, 323.2, 305.7, 222.9, 217.6, 184.4, 174.7]}, "year": {"x": ["2015年", "2016年", "2017年", "2018年"], "member": [27611, 32605, 34267, 54108], "order": [30574, 41001, 50451, 80801]}, "top": {"x": ["213", "313", "123", "113", "233", "333", "212", "133", "312", "223"], "people": [11.8, 5.6, 3.5, 3.6, 0.7, 0.7, 26.4, 0.3, 12.2, 0.5], "money": [30.9, 14.8, 11.9, 9.0, 8.9, 7.2, 5.4, 2.6, 2.5, 2.1]}, "dist": {"r_label": [36929, 74059, 37603], "f_label": [142001, 4534, 2056], "m_label": [37483, 74191, 36917]}, "bar3d": [["111", 2015, 2180], ["111", 2016, 1498], ["111", 2017, 3169], ["111", 2018, 2271], ["112", 2015, 3811], ["112", 2016, 2958], ["112", 2017, 5737], ["112", 2018, 4340], ["113", 2015, 1785], ["113", 2016, 1297], ["113", 2017, 2506], ["113", 2018, 1947], ["121", 2017, 1], ["121", 2018, 8], ["122", 2015, 27], ["122", 2017, 12], ["122", 2018, 976], ["123", 2015, 24], ["123", 2017, 4], ["123", 2018, 1904], ["132", 2018, 2], ["133", 2015, 15], ["133", 2016, 233], ["133", 2017, 36], ["133", 2018, 188], ["211", 2015, 3532], ["211", 2016, 4678], ["211", 2017, 3509], ["211", 2018, 7304], ["212", 2015, 6576], ["212", 2016, 8983], ["212", 2017, 6983], ["212", 2018, 14297], ["213", 2015, 2962], ["213", 2016, 4036], ["213", 2017, 2983], ["213", 2018, 6389], ["221", 2015, 2], ["221", 2016, 6], ["221", 2017, 3], ["221", 2018, 13], ["222", 2015, 43], ["222", 2016, 69], ["222", 2017, 46], ["222", 2018, 216], ["223", 2015, 37], ["223", 2016, 42], ["223", 2017, 38], ["223", 2018, 253], ["232", 2016, 4], ["232", 2018, 9], ["233", 2015, 20], ["233", 2016, 50], ["233", 2017, 589], ["233", 2018, 387], ["311", 2015, 1718], ["311", 2016, 2171], ["311", 2017, 2164], ["311", 2018, 3221], ["312", 2015, 3310], ["312", 2016, 4438], ["312", 2017, 4325], ["312", 2018, 6582], ["313", 2015, 1440], ["313", 2016, 1947], ["313", 2017, 1946], ["313", 2018, 3008], ["321", 2015, 6], ["321", 2016, 9], ["321", 2017, 2], ["321", 2018, 17], ["322", 2015, 61], ["322", 2016, 86], ["322", 2017, 64], ["322", 2018, 199], ["323", 2015, 44], ["323", 2016, 64], ["323", 2017, 60], ["323", 2018, 198], ["331", 2017, 1], ["332", 2015, 3], ["332", 2016, 8], ["332", 2017, 2], ["332", 2018, 24], ["333", 2015, 15], ["333", 2016, 28], ["333", 2017, 87], ["333", 2018, 355]]};
+const INK='#1F3A5F', BLUE='#8FA9C4', RED='#C0504D';
+const ax = {axisLine:{lineStyle:{color:'#DDE4EC'}},axisLabel:{color:'#7A8A9A',fontSize:11},splitLine:{lineStyle:{color:'#F0F3F7'}}};
+const charts=[];
+function mk(id,opt){const c=echarts.init(document.getElementById(id));c.setOption(opt);charts.push(c);}
+
+mk('c1',{tooltip:{trigger:'axis'},grid:{left:50,right:24,top:18,bottom:52},
+ xAxis:{type:'category',data:DATA.daily.x,...ax,axisLabel:{color:'#7A8A9A',fontSize:10,rotate:60}},
+ yAxis:{type:'value',...ax},
+ series:[{type:'line',data:DATA.daily.y,smooth:true,symbol:'circle',symbolSize:4,
+   lineStyle:{color:INK,width:2.4},itemStyle:{color:INK},
+   areaStyle:{color:{type:'linear',x:0,y:0,x2:0,y2:1,colorStops:[{offset:0,color:'rgba(31,58,95,.20)'},{offset:1,color:'rgba(31,58,95,0)'}]}}}]});
+
+mk('c2',{tooltip:{trigger:'axis'},grid:{left:50,right:18,top:18,bottom:34},
+ xAxis:{type:'category',data:DATA.hourly.x,...ax,axisLabel:{color:'#7A8A9A',fontSize:10}},
+ yAxis:{type:'value',...ax},
+ series:[{type:'bar',data:DATA.hourly.y.map((v,i)=>({value:v,itemStyle:{color:(i===21||i===22)?RED:(i===10||i===15)?BLUE:INK}}))}]});
+
+mk('c3',{tooltip:{trigger:'axis'},grid:{left:64,right:24,top:18,bottom:34},
+ xAxis:{type:'category',data:DATA.bd.x,...ax,axisLabel:{color:'#7A8A9A',fontSize:10}},
+ yAxis:{type:'value',name:'万件',nameTextStyle:{color:'#7A8A9A'},...ax},
+ series:[{type:'line',data:DATA.bd.y,smooth:true,lineStyle:{color:INK,width:2.4},itemStyle:{color:INK},
+   areaStyle:{color:'rgba(143,169,196,.35)'}}]});
+
+mk('c4',{tooltip:{trigger:'axis'},grid:{left:74,right:28,top:14,bottom:26},
+ xAxis:{type:'value',name:'万件',...ax},yAxis:{type:'category',data:DATA.btop.x.slice().reverse(),...ax},
+ series:[{type:'bar',data:DATA.btop.y.slice().reverse().map((v,i)=>({value:v,itemStyle:{color:i===9?RED:INK}}))}]});
+
+mk('c5',{tooltip:{trigger:'axis'},grid:{left:74,right:28,top:14,bottom:26},
+ xAxis:{type:'value',name:'元',...ax},yAxis:{type:'category',data:DATA.bprice.x.slice().reverse(),...ax},
+ series:[{type:'bar',data:DATA.bprice.y.slice().reverse().map((v,i)=>({value:v,itemStyle:{color:i===9?RED:BLUE}}))}]});
+
+mk('c6',{tooltip:{trigger:'axis'},grid:{left:64,right:20,top:18,bottom:34},
+ xAxis:{type:'category',data:DATA.fm.x,...ax},yAxis:{type:'value',...ax},
+ series:[{type:'bar',data:DATA.fm.y.map((v,i)=>({value:v,itemStyle:{color:i===6?RED:INK}}))}]});
+
+mk('c7',{tooltip:{trigger:'axis'},grid:{left:74,right:28,top:14,bottom:26},
+ xAxis:{type:'value',...ax},yAxis:{type:'category',data:DATA.fcity.x.slice().reverse(),...ax},
+ series:[{type:'bar',data:DATA.fcity.y.slice().reverse().map((v,i)=>({value:v,itemStyle:{color:i>=5?RED:INK}}))}]});
+
+mk('c8',{tooltip:{trigger:'item'},legend:{bottom:0,textStyle:{fontSize:11,color:'#5A6B7D'}},
+ series:[{type:'pie',radius:['42%','64%'],center:['50%','44%'],
+   label:{formatter:'{b}\n{d}%',color:'#33445A',fontSize:12},
+   data:DATA.cat.x.map((n,i)=>({name:n,value:DATA.cat.y[i],itemStyle:{color:i===0?INK:BLUE}}))}]});
+
+mk('c10',{tooltip:{trigger:'axis'},legend:{data:['人数占比','金额占比'],top:0,textStyle:{fontSize:11,color:'#5A6B7D'}},
+ grid:{left:52,right:26,top:32,bottom:30},
+ xAxis:{type:'category',data:DATA.top.x,...ax},yAxis:{type:'value',name:'%',...ax},
+ series:[{name:'人数占比',type:'bar',data:DATA.top.people,itemStyle:{color:BLUE}},
+         {name:'金额占比',type:'bar',data:DATA.top.money,itemStyle:{color:INK}}]});
+
+mk('c9',{
+  tooltip:{show:true,trigger:'item',textStyle:{fontSize:12}},
+  xAxis3D:{name:'分组名称',type:'category',nameGap:14,axisLabel:{fontSize:9,color:'#7A8A9A'}},
+  yAxis3D:{name:'年份',type:'category',nameGap:14,axisLabel:{fontSize:9,color:'#7A8A9A'}},
+  zAxis3D:{name:'会员数量',type:'value',nameGap:12,axisLabel:{fontSize:9,color:'#7A8A9A'}},
+  grid3D:{boxWidth:130,boxHeight:70,boxDepth:60,
+    viewControl:{autoRotate:false,alpha:18,beta:40,distance:210,rotateSensitivity:1.2,zoomSensitivity:1.2},
+    light:{main:{intensity:1.1,shadow:false},ambient:{intensity:0.45}}},
+  visualMap:{show:true,type:'continuous',min:0,max:14297,calculable:true,
+    inRange:{color:['#313695','#4575b4','#74add1','#abd9e9','#e0f3f8','#ffffbf','#fee090','#fdae61','#f46d43','#d73027','#a50026']},
+    orient:'vertical',left:8,bottom:8,itemWidth:10,itemHeight:70,splitNumber:4,
+    textStyle:{fontSize:9,color:'#7A8A9A'},borderWidth:0},
+  series:[{type:'bar3D',name:'会员数量',data:DATA.bar3d,
+    shading:'lambert',label:{show:false},
+    emphasis:{label:{show:false},itemStyle:{opacity:1}},
+    itemStyle:{opacity:0.92}}]
+});
+
+document.querySelectorAll('.tab').forEach(t=>{
+  t.onclick=()=>{
+    document.querySelectorAll('.tab').forEach(x=>x.classList.remove('on'));
+    document.querySelectorAll('section').forEach(x=>x.classList.remove('on'));
+    t.classList.add('on');
+    document.getElementById(t.dataset.tab).classList.add('on');
+    setTimeout(()=>charts.forEach(c=>c.resize()),30);
+  };
+});
+window.addEventListener('resize',()=>charts.forEach(c=>c.resize()));
+</script>
+</body>
+</html>
